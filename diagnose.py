@@ -9,6 +9,14 @@ import json
 import requests
 from pathlib import Path
 
+
+def get_data_dir(script_dir: Path) -> Path:
+    """获取当前生效的数据目录"""
+    data_dir = os.environ.get("CIVITAI_CHECKER_DATA_DIR", "").strip()
+    if data_dir:
+        return Path(data_dir)
+    return script_dir
+
 def check_python_version():
     """检查Python版本"""
     print("=== Python版本检查 ===")
@@ -44,7 +52,9 @@ def check_files():
         'civitai_checker.py',
         'requirements.txt',
         'README.md',
-        'test_checker.py'
+        'Dockerfile',
+        'docker-compose.yml',
+        'tests/test_civitai_checker.py'
     ]
     
     all_good = True
@@ -62,9 +72,11 @@ def check_config_files():
     """检查配置文件"""
     print("\n=== 配置文件检查 ===")
     script_dir = Path(__file__).parent
+    data_dir = get_data_dir(script_dir)
+    print(f"当前数据目录: {data_dir}")
     
     # 检查config.json
-    config_file = script_dir / "config.json"
+    config_file = data_dir / "config.json"
     if config_file.exists():
         try:
             with open(config_file, 'r', encoding='utf-8') as f:
@@ -80,7 +92,7 @@ def check_config_files():
         print("ℹ️  config.json - 不存在（首次运行时会自动创建）")
     
     # 检查历史文件
-    history_file = script_dir / "model_history.json"
+    history_file = data_dir / "model_history.json"
     if history_file.exists():
         try:
             with open(history_file, 'r', encoding='utf-8') as f:
@@ -97,30 +109,28 @@ def check_config_files():
 def check_network():
     """检查网络连接"""
     print("\n=== 网络连接检查 ===")
-    
-    # 测试基本网络连接
-    try:
-        response = requests.get("https://www.google.com", timeout=10)
-        print("✅ 基本网络连接 - 正常")
-    except Exception as e:
-        print(f"❌ 基本网络连接 - 失败: {e}")
-        return False
-    
-    # 测试Civitai API连接
-    try:
-        response = requests.get("https://civitai.com/api/v1/models/4384", timeout=30)
-        if response.status_code == 200:
-            print("✅ Civitai API连接 - 正常")
-            data = response.json()
-            print(f"   测试模型: {data.get('name', 'Unknown')}")
-        else:
-            print(f"❌ Civitai API连接 - HTTP {response.status_code}")
-            return False
-    except Exception as e:
-        print(f"❌ Civitai API连接 - 失败: {e}")
-        return False
-    
-    return True
+
+    api_targets = [
+        ("civitai.com", "https://civitai.com/api/v1/models/4384"),
+        ("civitai.red", "https://civitai.red/api/v1/models/4384"),
+    ]
+
+    all_good = True
+    for site_name, api_url in api_targets:
+        try:
+            response = requests.get(api_url, timeout=30)
+            if response.status_code == 200:
+                data = response.json()
+                print(f"✅ {site_name} API连接 - 正常")
+                print(f"   测试模型: {data.get('name', 'Unknown')}")
+            else:
+                print(f"❌ {site_name} API连接 - HTTP {response.status_code}")
+                all_good = False
+        except Exception as e:
+            print(f"❌ {site_name} API连接 - 失败: {e}")
+            all_good = False
+
+    return all_good
 
 def check_permissions():
     """检查文件权限"""

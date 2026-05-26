@@ -1,0 +1,13 @@
+.git
+.gitignore
+__pycache__/
+*.py[cod]
+*.log
+.pytest_cache/
+.venv/
+venv/
+tests/
+docs/
+config.json
+model_history.json
+data/

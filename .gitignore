@@ -1,0 +1,16 @@
+__pycache__/
+*.py[cod]
+*.log
+.pytest_cache/
+.venv/
+venv/
+
+config.json
+model_history.json
+data/
+task_config.xml
+
+.env
+.env.*
+.coverage
+htmlcov/

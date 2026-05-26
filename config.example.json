@@ -1,0 +1,41 @@
+{
+  "models": [
+    {
+      "id": "4384",
+      "site": "civitai.com",
+      "url": "https://civitai.com/models/4384/dreamshaper",
+      "name": "DreamShaper",
+      "alias": "DreamShaper",
+      "added_date": "2026-05-26T00:00:00"
+    },
+    {
+      "id": "1522819",
+      "site": "civitai.red",
+      "url": "https://civitai.red/models/1522819",
+      "name": "Example Red Model",
+      "alias": "Example Red Model",
+      "added_date": "2026-05-26T00:00:00"
+    }
+  ],
+  "check_interval_hours": 24,
+  "notification": {
+    "enabled": false,
+    "email": {
+      "smtp_server": "smtp.example.com",
+      "smtp_port": 587,
+      "use_tls": true,
+      "username": "your_email@example.com",
+      "password": "your_password_or_app_password",
+      "from_addr": "your_email@example.com",
+      "to_addr": "receiver@example.com"
+    }
+  },
+  "api_key": "",
+  "proxy": {
+    "enabled": false,
+    "http": "http://host-or-proxy:10808",
+    "https": "http://host-or-proxy:10808",
+    "username": "",
+    "password": ""
+  }
+}

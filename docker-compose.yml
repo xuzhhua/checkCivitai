@@ -1,0 +1,12 @@
+services:
+  civitai-checker:
+    build:
+      context: .
+    container_name: civitai-checker
+    restart: unless-stopped
+    environment:
+      TZ: Asia/Shanghai
+      CIVITAI_CHECKER_DATA_DIR: /app/data
+    volumes:
+      - ./data:/app/data
+    command: ["python", "civitai_checker.py", "--daemon"]
